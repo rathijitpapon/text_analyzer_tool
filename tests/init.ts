@@ -1,10 +1,13 @@
+import { Postgres } from "../src/providers/postgres";
+
 const main = async () => {
     beforeAll(async () => {
-        console.log('Starting tests');
+        await Postgres.getInstance();
     });
 
     afterAll(async () => {
-        console.log('Tests finished');
+        const postgres = await Postgres.getInstance();
+        await postgres.disconnect();
     });
 }
 

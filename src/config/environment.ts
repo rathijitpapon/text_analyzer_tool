@@ -9,6 +9,12 @@ const envVariablesSchema = z.object({
   VERSION: z.string(),
   ALLOWED_ORIGINS: z.string(),
 
+  POSTGRES_USER: z.string(),
+  POSTGRES_PASSWORD: z.string(),
+  POSTGRES_DB: z.string(),
+  POSTGRES_PORT: z.coerce.number().int(),
+  POSTGRES_HOST: z.string(),
+
   JWT_SECRET: z.string(),
   JWT_ACCESS_EXPIRATION_MINUTES: z.coerce.number().int(),
   JWT_REFRESH_EXPIRATION_MINUTES: z.coerce.number().int(),
@@ -42,6 +48,16 @@ export class Environment {
       port: this.envVariables.PORT,
       version: this.envVariables.VERSION,
       allowedOrigins: this.envVariables.ALLOWED_ORIGINS.split(','),
+    };
+  }
+
+  public getPostgresConfig() {
+    return {
+      user: this.envVariables.POSTGRES_USER,
+      password: this.envVariables.POSTGRES_PASSWORD,
+      database: this.envVariables.POSTGRES_DB,
+      port: this.envVariables.POSTGRES_PORT,
+      host: this.envVariables.POSTGRES_HOST,
     };
   }
 

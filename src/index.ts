@@ -3,6 +3,7 @@ dotenv.config();
 
 import { ExpressApplication } from "./providers/expressApp";
 import { Cache } from './providers/cache';
+import { Postgres } from './providers/postgres';
 import { Environment } from "./config/environment";
 import { ApplicationLogger } from "./utils/appLogger";
 
@@ -12,6 +13,7 @@ const main = async () => {
 
     app.listen(appConfig.port, async () => {
         await Cache.getInstance();
+        await Postgres.getInstance();
 
         await new ApplicationLogger('INFO', `Application is running on port: ${appConfig.port}`).write();
     });
