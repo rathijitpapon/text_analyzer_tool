@@ -58,7 +58,7 @@ export class ExpressApplication {
         app.use(setDefaultRequestProperties);
 
         // Set api routes
-        app.use(new APIEndpoints().register());
+        app.use('/api', new APIEndpoints().register());
 
         // send back a 404 error for any unknown api request
         app.use((req: Request, res: Response, next: NextFunction) => {
