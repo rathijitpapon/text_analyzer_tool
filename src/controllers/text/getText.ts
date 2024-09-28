@@ -3,7 +3,7 @@ import { ZodSchema } from "zod";
 import { Request, Response, NextFunction } from "express";
 import { ApiError } from "../../utils/apiError";
 import { Controller } from "../../types/controller";
-import { getTextResponseSchema, GetTextRequest } from "../../validations/text/getText";
+import { GetTextRequest } from "../../validations/text/getText";
 import { GetTextAction } from "../../actions/text/getText";
 import { ResponseHandler } from "../../middlewares/response";
 

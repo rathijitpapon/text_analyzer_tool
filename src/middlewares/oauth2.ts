@@ -17,7 +17,6 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
 
 export const authenticateWithGoogle = (): void => {
     const verify: VerifyFunctionWithRequest = (request: Request, accessToken: string, refreshToken: string, profile: any, done: VerifyCallback) => {
-        console.log(accessToken, refreshToken, profile);
         done(null, profile);
     };
 

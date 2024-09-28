@@ -29,7 +29,7 @@ export class TextAPI implements API {
 
   register(): Router {
     this.router.post('/', [createNewTextValidator], (req: Request, res: Response, next: NextFunction) => new CreateNewTextController(req.body).execute(req, res, next));
-    this.router.get('/', (req: Request, res: Response, next: NextFunction) => new GetAllTextsController(req.body).execute(req, res, next));
+    this.router.get('/', (req: Request, res: Response, next: NextFunction) => new GetAllTextsController().execute(req, res, next));
     this.router.patch('/:id', [updateTextValidator], (req: Request, res: Response, next: NextFunction) => new UpdateTextController(req.body).execute(req, res, next));
     this.router.delete('/:id', [deleteTextValidator], (req: Request, res: Response, next: NextFunction) => new DeleteTextController(req.body).execute(req, res, next));
     this.router.get('/:id', [getTextValidator], (req: Request, res: Response, next: NextFunction) => new GetTextController(req.body, getTextResponseSchema).execute(req, res, next));
