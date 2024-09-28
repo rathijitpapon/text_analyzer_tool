@@ -8,16 +8,18 @@ const envVariablesSchema = z.object({
   PORT: z.coerce.number().int(),
   VERSION: z.string(),
   ALLOWED_ORIGINS: z.string(),
+  SIGN_IN_URL: z.string(),
+  SESSION_SECRET: z.string(),
+
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
+  GOOGLE_CALLBACK_URL: z.string(),
 
   POSTGRES_USER: z.string(),
   POSTGRES_PASSWORD: z.string(),
   POSTGRES_DB: z.string(),
   POSTGRES_PORT: z.coerce.number().int(),
   POSTGRES_HOST: z.string(),
-
-  JWT_SECRET: z.string(),
-  JWT_ACCESS_EXPIRATION_MINUTES: z.coerce.number().int(),
-  JWT_REFRESH_EXPIRATION_MINUTES: z.coerce.number().int(),
 
   REDIS_URL: z.string().url(),
   REDIS_PASSWORD: z.string(),
@@ -48,6 +50,16 @@ export class Environment {
       port: this.envVariables.PORT,
       version: this.envVariables.VERSION,
       allowedOrigins: this.envVariables.ALLOWED_ORIGINS.split(','),
+      signInUrl: this.envVariables.SIGN_IN_URL,
+      sessionSecret: this.envVariables.SESSION_SECRET,
+    };
+  }
+
+  public getGoogleOAuthConfig() {
+    return {
+      clientID: this.envVariables.GOOGLE_CLIENT_ID,
+      clientSecret: this.envVariables.GOOGLE_CLIENT_SECRET,
+      callbackURL: this.envVariables.GOOGLE_CALLBACK_URL,
     };
   }
 
@@ -58,14 +70,6 @@ export class Environment {
       database: this.envVariables.POSTGRES_DB,
       port: this.envVariables.POSTGRES_PORT,
       host: this.envVariables.POSTGRES_HOST,
-    };
-  }
-
-  public getJwtConfig() {
-    return {
-      secret: this.envVariables.JWT_SECRET,
-      accessExpirationMinutes: this.envVariables.JWT_ACCESS_EXPIRATION_MINUTES,
-      refreshExpirationMinutes: this.envVariables.JWT_REFRESH_EXPIRATION_MINUTES,
     };
   }
 

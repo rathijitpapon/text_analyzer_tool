@@ -3,12 +3,14 @@ import helmet from 'helmet';
 import cors from 'cors';
 import httpStatus from 'http-status';
 import passport from 'passport';
+import session from 'express-session';
 import compression from 'compression';
 import { ApiError } from '../utils/apiError';
 import { Environment } from '../config/environment';
 import { APIEndpoints } from '../apis';
 import { ErrorHandler } from '../middlewares/error';
 import { setDefaultRequestProperties } from '../middlewares/request';
+import { authenticateWithGoogle } from '../middlewares/oauth2';
 
 export class ExpressApplication {
     private static appConfig = Environment.getInstance().getAppConfig();
@@ -51,8 +53,17 @@ export class ExpressApplication {
         );
         app.options('*', cors());
 
+        // Set OAuth2 Authentication
+        authenticateWithGoogle();
+
         // Set Passport Authentication
+        app.use(session({
+            secret: this.appConfig.sessionSecret,
+            resave: false,
+            saveUninitialized: false,
+        }));
         app.use(passport.initialize());
+        app.use(passport.session());
 
         // Set Default Request Properties
         app.use(setDefaultRequestProperties);
