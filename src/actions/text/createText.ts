@@ -6,19 +6,25 @@ import * as TextAnalyzer from '../../utils/textAnalyzer';
 
 export class CreateNewTextAction implements Action {
     private text: string;
+    private userId: string;
 
-    constructor(text: string) {
+    constructor(text: string, userId: string) {
         this.text = text;
+        this.userId = userId;
     }
 
     private async calculateTextMetrics(text: string): Promise<CreatableText> {
         const cache = await Cache.getInstance();
-        const cachedText = await cache.read(text);
+        let cachedText = await cache.read(text);
         if (cachedText) {
-            return cachedText as ViewableText;
+            return {
+                userId: this.userId,
+                ...cachedText,
+            } as CreatableText;
         }
         
         return {
+            userId: this.userId,
             text,
             wordCount: TextAnalyzer.countWords(text),
             characterCount: TextAnalyzer.countCharacters(text),
@@ -47,6 +53,7 @@ export class CreateNewTextAction implements Action {
 
         return {
             id: result.rows[0].id,
+            userId: this.userId,
             ...cachedText,
         };
     }

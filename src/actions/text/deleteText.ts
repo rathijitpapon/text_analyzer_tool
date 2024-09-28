@@ -5,14 +5,16 @@ import { ApiError } from '../../utils/apiError';
 
 export class DeleteTextAction implements Action {
     private id: string;
+    private userId: string;
 
-    constructor(id: string) {
+    constructor(id: string, userId: string) {
         this.id = id;
+        this.userId = userId;
     }
     
     private async checkIfTextExists(id: string): Promise<boolean> {
         const postgres = await Postgres.getInstance();
-        const result = await postgres.query(`SELECT * FROM texts WHERE id = '${id}'`);
+        const result = await postgres.query(`SELECT * FROM texts WHERE id = '${id}' AND userId = '${this.userId}'`);
         return result.rows.length > 0;
     }
 

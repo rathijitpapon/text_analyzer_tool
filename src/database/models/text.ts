@@ -3,6 +3,7 @@ import { Postgres } from '../../providers/postgres';
 // Text Interface
 export interface Text {
     id: string;
+    userId: string;
     text: string;
     wordCount: number;
     characterCount: number;
@@ -14,13 +15,13 @@ export interface Text {
 };
 
 // Creatable Text Interface
-export type CreatableText = Pick<Text, 'text' | 'wordCount' | 'characterCount' | 'sentenceCount' | 'paragraphCount' | 'longestParagraphWords'>;
+export type CreatableText = Pick<Text, 'userId' | 'text' | 'wordCount' | 'characterCount' | 'sentenceCount' | 'paragraphCount' | 'longestParagraphWords'>;
 
 // Updatable Text Interface
-export type UpdatableText = CreatableText;
+export type UpdatableText = Pick<Text, 'text' | 'wordCount' | 'characterCount' | 'sentenceCount' | 'paragraphCount' | 'longestParagraphWords'>;
 
 // Viewable Text Type
-export type ViewableText = Pick<Text, 'id' | 'text' | 'wordCount' | 'characterCount' | 'sentenceCount' | 'paragraphCount' | 'longestParagraphWords'>;
+export type ViewableText = Pick<Text, 'id' | 'userId' | 'text' | 'wordCount' | 'characterCount' | 'sentenceCount' | 'paragraphCount' | 'longestParagraphWords'>;
 
 // Primary Key
 export const PrimaryKey = ['id'];
@@ -50,6 +51,7 @@ export const createTextTable = async (): Promise<void> => {
     // Define the columns for the Text table
     const textColumns: Record<string, string> = {
         id: 'UUID PRIMARY KEY DEFAULT uuid_generate_v1mc()',
+        userId: 'VARCHAR(255) NOT NULL',
         text: 'TEXT NOT NULL',
         wordCount: 'INTEGER NOT NULL',
         characterCount: 'INTEGER NOT NULL',
@@ -63,4 +65,5 @@ export const createTextTable = async (): Promise<void> => {
     // Create the Text table
     await postgres.createTable('texts', textColumns);
     await postgres.query("SELECT trigger_updated_at('texts');");
+    await postgres.query("CREATE INDEX ON texts (userId);");
 }

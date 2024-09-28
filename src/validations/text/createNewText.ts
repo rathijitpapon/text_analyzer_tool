@@ -15,6 +15,7 @@ export type CreateNewTextRequest = z.infer<typeof createNewTextSchema>;
 // Create New Text Response Schema
 export const createNewTextResponseSchema = z.object({
     id: z.string().uuid(),
+    userId: z.string(),
     text: z.string().min(1),
     wordCount: z.number(),
     characterCount: z.number(),

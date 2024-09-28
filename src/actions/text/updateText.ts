@@ -9,15 +9,17 @@ import { ApiError } from '../../utils/apiError';
 export class UpdateTextAction implements Action {
     private updatedText: string;
     private id: string;
+    private userId: string;
 
-    constructor(updatedText: string, id: string) {
+    constructor(updatedText: string, id: string, userId: string) {
         this.updatedText = updatedText;
         this.id = id;
+        this.userId = userId;
     }
 
     private async checkIfTextExists(id: string): Promise<boolean> {
         const postgres = await Postgres.getInstance();
-        const result = await postgres.query(`SELECT * FROM texts WHERE id = '${id}'`);
+        const result = await postgres.query(`SELECT * FROM texts WHERE id = '${id}' AND userId = '${this.userId}'`);
         return result.rows.length > 0;
     }
 
@@ -25,7 +27,7 @@ export class UpdateTextAction implements Action {
         const cache = await Cache.getInstance();
         const cachedText = await cache.read(updatedText);
         if (cachedText) {
-            return cachedText as ViewableText;
+            return cachedText as UpdatableText;
         }
         
         return {
@@ -61,6 +63,7 @@ export class UpdateTextAction implements Action {
 
         return {
             id: result.rows[0].id,
+            userId: result.rows[0].userid,
             ...cachedText,
         };
     }

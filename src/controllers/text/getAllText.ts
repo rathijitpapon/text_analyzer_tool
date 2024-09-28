@@ -11,7 +11,8 @@ export class GetAllTextsController implements Controller {
     
     public async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const result = await new GetAllTextsAction().execute();
+            const userId = (req.user as any).id;
+            const result = await new GetAllTextsAction(userId).execute();
 
             await new ResponseHandler(req, res, next, httpStatus.OK, result, getAllTextsResponseSchema).execute();
         } catch (error: ApiError | any) {

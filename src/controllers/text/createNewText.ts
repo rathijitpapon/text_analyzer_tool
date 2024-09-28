@@ -15,8 +15,10 @@ export class CreateNewTextController implements Controller {
 
     async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+            const userId = (req.user as any).id;
             const text = await new CreateNewTextAction(
                 this.requestPayload.text,
+                userId,
             ).execute();
 
             await new ResponseHandler(req, res, next, httpStatus.CREATED, text, createNewTextResponseSchema).execute();

@@ -3,9 +3,48 @@ import supertest from 'supertest';
 import { ExpressApplication } from '../../src/providers/expressApp';
 import { texts } from "../data/text";
 import { Postgres } from '../../src/providers/postgres';
+import passport from 'passport';
+import { Request, Response, NextFunction } from 'express';
+import { Strategy as GoogleStrategy, VerifyFunctionWithRequest, VerifyCallback } from "passport-google-oauth2";
+import { Environment } from '../../src/config/environment';
+import { users } from '../data/user';
+
+const googleOAuthConfig = Environment.getInstance().getGoogleOAuthConfig();
+
+jest.mock('../../src/middlewares/oauth2', () => ({
+    authenticate: jest.fn((req: Request, res: Response, next: NextFunction) => {
+        if (req.headers.cookie) {
+            req.user = users[0];
+            next();
+        } else {
+            res.status(httpStatus.UNAUTHORIZED).json({ message: 'Unauthorized' });
+        }
+    }),
+    authenticateWithGoogle: jest.fn(() => {
+        // Simulate Google authentication
+        const verify: VerifyFunctionWithRequest = (request: Request, accessToken: string, refreshToken: string, profile: any, done: VerifyCallback) => {
+            done(null, users[0]);
+        };
+
+        passport.use(new GoogleStrategy({
+            clientID: googleOAuthConfig.clientID,
+            clientSecret: googleOAuthConfig.clientSecret,
+            callbackURL: googleOAuthConfig.callbackURL,
+            passReqToCallback: true,
+            scope: ['profile', 'email']
+        }, verify));
+
+        passport.serializeUser((user: any, done: VerifyCallback) => {
+            done(null, user);
+        });
+
+        passport.deserializeUser((user: any, done: VerifyCallback) => {
+            done(null, user);
+        });
+    }),
+}));
 
 describe('Text APIs', () => {
-
     beforeAll(async () => {
         const postgres = await Postgres.getInstance();
         await postgres.query('DELETE FROM texts');
@@ -20,6 +59,7 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: textObject.text,
             });
@@ -38,6 +78,7 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: '',
             })
@@ -49,12 +90,14 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: textObject.text,
             });
 
         const textGetResponse = await supertest(await ExpressApplication.configure())
             .get(`/api/v1/texts/${textCreateResponse.body.id}`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textGetResponse.status).toEqual(httpStatus.OK);
@@ -71,6 +114,7 @@ describe('Text APIs', () => {
         const invalidUuid = 'e3028a62-0c1c-42da-bcaa-b73fa06b7366';
         const textGetResponse = await supertest(await ExpressApplication.configure())
             .get(`/api/v1/texts/${invalidUuid}`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textGetResponse.status).toEqual(httpStatus.NOT_FOUND);
@@ -80,6 +124,7 @@ describe('Text APIs', () => {
         const invalidUuid = '123';
         const textGetResponse = await supertest(await ExpressApplication.configure())
             .get(`/api/v1/texts/${invalidUuid}`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textGetResponse.status).toEqual(httpStatus.UNPROCESSABLE_ENTITY);
@@ -89,6 +134,7 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: textObject.text,
             });
@@ -96,6 +142,7 @@ describe('Text APIs', () => {
         const newText = texts[1];
         const textUpdateResponse = await supertest(await ExpressApplication.configure())
             .patch(`/api/v1/texts/${textCreateResponse.body.id}`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: newText.text,
             });
@@ -114,6 +161,7 @@ describe('Text APIs', () => {
         const invalidUuid = 'e3028a62-0c1c-42da-bcaa-b73fa06b7366';
         const textUpdateResponse = await supertest(await ExpressApplication.configure())
             .patch(`/api/v1/texts/${invalidUuid}`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: texts[1].text,
             });
@@ -125,12 +173,14 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: textObject.text,
             });
 
         const textUpdateResponse = await supertest(await ExpressApplication.configure())
             .patch(`/api/v1/texts/${textCreateResponse.body.id}`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: '',
             });
@@ -142,18 +192,21 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: textObject.text,
             });
 
         const textDeleteResponse = await supertest(await ExpressApplication.configure())
             .delete(`/api/v1/texts/${textCreateResponse.body.id}`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textDeleteResponse.status).toEqual(httpStatus.OK);
 
         const textGetResponse = await supertest(await ExpressApplication.configure())
             .get(`/api/v1/texts/${textCreateResponse.body.id}`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textGetResponse.status).toEqual(httpStatus.NOT_FOUND);
@@ -163,6 +216,7 @@ describe('Text APIs', () => {
         const invalidUuid = 'e3028a62-0c1c-42da-bcaa-b73fa06b7366';
         const textDeleteResponse = await supertest(await ExpressApplication.configure())
             .delete(`/api/v1/texts/${invalidUuid}`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textDeleteResponse.status).toEqual(httpStatus.NOT_FOUND);
@@ -172,6 +226,7 @@ describe('Text APIs', () => {
         const invalidUuid = '123';
         const textDeleteResponse = await supertest(await ExpressApplication.configure())
             .delete(`/api/v1/texts/${invalidUuid}`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textDeleteResponse.status).toEqual(httpStatus.UNPROCESSABLE_ENTITY);
@@ -180,18 +235,21 @@ describe('Text APIs', () => {
     it('should get all texts', async () => {
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: texts[0].text,
             });
 
         const textCreateResponse2 = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: texts[1].text,
             });
 
         const textGetResponse = await supertest(await ExpressApplication.configure())
             .get('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textGetResponse.status).toEqual(httpStatus.OK);
@@ -206,12 +264,14 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: textObject.text,
             });
 
         const textWordCountResponse = await supertest(await ExpressApplication.configure())
             .get(`/api/v1/texts/${textCreateResponse.body.id}/word-count`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textWordCountResponse.status).toEqual(httpStatus.OK);
@@ -222,12 +282,14 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: textObject.text,
             });
 
         const textCharacterCountResponse = await supertest(await ExpressApplication.configure())
             .get(`/api/v1/texts/${textCreateResponse.body.id}/character-count`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textCharacterCountResponse.status).toEqual(httpStatus.OK);
@@ -238,12 +300,14 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: textObject.text,
             });
 
         const textSentenceCountResponse = await supertest(await ExpressApplication.configure())
             .get(`/api/v1/texts/${textCreateResponse.body.id}/sentence-count`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textSentenceCountResponse.status).toEqual(httpStatus.OK);
@@ -254,12 +318,14 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: textObject.text,
             });
 
         const textParagraphCountResponse = await supertest(await ExpressApplication.configure())
             .get(`/api/v1/texts/${textCreateResponse.body.id}/paragraph-count`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textParagraphCountResponse.status).toEqual(httpStatus.OK);
@@ -270,12 +336,14 @@ describe('Text APIs', () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
             .post('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send({
                 text: textObject.text,
             });
 
         const textLongestParagraphWordsResponse = await supertest(await ExpressApplication.configure())
             .get(`/api/v1/texts/${textCreateResponse.body.id}/longest-paragraph-words`)
+            .set('Cookie', ['connect.sid=test-session-id'])
             .send();
 
         expect(textLongestParagraphWordsResponse.status).toEqual(httpStatus.OK);

@@ -14,6 +14,7 @@ export type GetAllTextsRequest = z.infer<typeof getAllTextsSchema>;
 export const getAllTextsResponseSchema = z.array(
     z.object({
         id: z.string().uuid(),
+        userId: z.string(),
         text: z.string().min(1),
         wordCount: z.number(),
         characterCount: z.number(),

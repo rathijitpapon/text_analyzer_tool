@@ -15,8 +15,9 @@ export class UpdateTextController implements Controller {
     
     public async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+            const userId = (req.user as any).id;
             const { text, id } = this.requestPayload;
-            const result = await new UpdateTextAction(text, id).execute();
+            const result = await new UpdateTextAction(text, id, userId).execute();
 
             await new ResponseHandler(req, res, next, httpStatus.OK, result, updateTextResponseSchema).execute();
         } catch (error: ApiError | any) {

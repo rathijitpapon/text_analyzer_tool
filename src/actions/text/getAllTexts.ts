@@ -3,14 +3,19 @@ import { ViewableText } from '../../database/models/text';
 import { Postgres } from '../../providers/postgres';
 
 export class GetAllTextsAction implements Action {
-    constructor() {}
+    private userId: string;
+
+    constructor(userId: string) {
+        this.userId = userId;
+    }
 
     private async findTexts(): Promise<ViewableText[]> {
         const postgres = await Postgres.getInstance();
-        const result = await postgres.query(`SELECT * FROM texts`);
+        const result = await postgres.query(`SELECT * FROM texts WHERE userId = '${this.userId}'`);
         
         const texts = result.rows.map((row) => ({
             id: row.id,
+            userId: row.userid,
             text: row.text,
             wordCount: row.wordcount,
             characterCount: row.charactercount,

@@ -15,8 +15,9 @@ export class DeleteTextController implements Controller {
     
     public async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+            const userId = (req.user as any).id;
             const { id } = this.requestPayload;
-            await new DeleteTextAction(id).execute();
+            await new DeleteTextAction(id, userId).execute();
 
             await new ResponseHandler(req, res, next, httpStatus.OK, {}, deleteTextResponseSchema).execute();
         } catch (error: ApiError | any) {
