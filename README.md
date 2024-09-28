@@ -80,6 +80,8 @@ A powerful text analysis tool for processing and understanding textual data.
 
 | Endpoint | Method | Body | Auth Required | Description |
 |----------|--------|------|---------------|-------------|
+| `/api/health` | GET | None | No | Checks the health of the application |
+| `/api` | GET | None | No | Index page of the application |
 | `/api/v1/auth/google` | GET | None | No | Initiates Google OAuth authentication |
 | `/api/v1/auth/me` | GET | None | Yes | Retrieves current user information |
 | `/api/v1/texts` | POST | `{ "text": "string" }` | Yes | Creates a new text entry |
