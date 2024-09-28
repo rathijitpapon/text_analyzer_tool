@@ -5,6 +5,7 @@ import { ExpressApplication } from '../../src/providers/expressApp';
 import { texts } from "../data/text";
 import { Postgres } from '../../src/providers/postgres';
 import { mockGoogleOAuth2, mockAuthenticationMiddleware } from '../mocks/auth';
+import { rateLimitConfig } from '../../src/config/constant';
 
 jest.mock('../../src/middlewares/oauth2', () => {
     return {
@@ -225,5 +226,21 @@ describe('Text APIs', () => {
 
         expect(longestParagraphWordsResponse.status).toEqual(httpStatus.OK);
         expect(longestParagraphWordsResponse.body.longestParagraphWords).toEqual(texts[0].longestParagraphWords);
+    });
+
+    it('should get rate limit error', async () => {
+        for (let i = 0; i < rateLimitConfig.max; i++) {
+            await request
+                .get('/api/v1/texts')
+                .set('Cookie', ['connect.sid=test-session-id'])
+                .send();
+        }
+
+        const response = await request
+            .get('/api/v1/texts')
+            .set('Cookie', ['connect.sid=test-session-id'])
+            .send();
+
+        expect(response.status).toEqual(httpStatus.TOO_MANY_REQUESTS);
     });
 });

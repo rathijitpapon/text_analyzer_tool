@@ -5,12 +5,14 @@ import httpStatus from 'http-status';
 import passport from 'passport';
 import session from 'express-session';
 import compression from 'compression';
+import { rateLimit } from 'express-rate-limit'
 import { ApiError } from '../utils/apiError';
 import { Environment } from '../config/environment';
 import { APIEndpoints } from '../apis';
 import { ErrorHandler } from '../middlewares/error';
 import { setDefaultRequestProperties } from '../middlewares/request';
 import { authenticateWithGoogle } from '../middlewares/oauth2';
+import { rateLimitConfig } from '../config/constant';
 
 export class ExpressApplication {
     private static appConfig = Environment.getInstance().getAppConfig();
@@ -52,6 +54,18 @@ export class ExpressApplication {
             )
         );
         app.options('*', cors());
+
+        // Set Rate Limiting
+        app.use(rateLimit({
+            windowMs: rateLimitConfig.windowMs,
+            max: rateLimitConfig.max,
+            message: rateLimitConfig.message,
+            handler: (req: Request, res: Response, next: NextFunction) => {
+                next(new ApiError(httpStatus.TOO_MANY_REQUESTS, rateLimitConfig.message));
+            },
+            statusCode: httpStatus.TOO_MANY_REQUESTS,
+            skip: (req: Request) => req.originalUrl.startsWith('/api/v1/auth'),
+        }));
 
         // Set OAuth2 Authentication
         authenticateWithGoogle();
