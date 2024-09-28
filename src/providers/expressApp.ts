@@ -94,9 +94,6 @@ export class ExpressApplication {
         app.use(ErrorHandler.resolveApplicationError);
         app.use(ErrorHandler.resolveUncaughtException);
 
-        // Set Trust Proxy
-        app.set('trust proxy', true);
-
         return app;
     }
 }
