@@ -13,7 +13,7 @@ const setupDatabase = async (): Promise<void> => {
                 returns trigger as
             $$
             begin
-                NEW.updated_at = now();
+                NEW.updatedat = now();
             return NEW;
             end;
             $$ language plpgsql;

@@ -8,11 +8,11 @@ export const texts = [
         longestParagraphWords: ["This"],
     },
     {
-        text: "This is another test text\n\nThis is another test text",
-        wordCount: 11,
-        characterCount: 44,
+        text: "This is another test text.\n\nThis is another test text",
+        wordCount: 10,
+        characterCount: 53,
         sentenceCount: 2,
         paragraphCount: 2,
-        longestParagraphWords: ["This", "another"],
+        longestParagraphWords: ["another", "another"],
     },
 ];

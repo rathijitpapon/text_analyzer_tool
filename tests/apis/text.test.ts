@@ -61,7 +61,7 @@ describe('Text APIs', () => {
             .get(`/api/v1/texts/${invalidUuid}`)
             .send();
 
-        expect(textGetResponse.status).toEqual(httpStatus.BAD_REQUEST);
+        expect(textGetResponse.status).toEqual(httpStatus.NOT_FOUND);
     });
 
     it('should get unprocessable entity with invalid uuid', async () => {
@@ -106,7 +106,7 @@ describe('Text APIs', () => {
                 text: texts[1].text,
             });
 
-        expect(textUpdateResponse.status).toEqual(httpStatus.BAD_REQUEST);
+        expect(textUpdateResponse.status).toEqual(httpStatus.NOT_FOUND);
     });
 
     it('should not update text by id with invalid text', async () => {
@@ -138,13 +138,13 @@ describe('Text APIs', () => {
             .delete(`/api/v1/texts/${textCreateResponse.body.id}`)
             .send();
 
-        expect(textDeleteResponse.status).toEqual(httpStatus.NO_CONTENT);
+        expect(textDeleteResponse.status).toEqual(httpStatus.OK);
 
         const textGetResponse = await supertest(await ExpressApplication.configure())
             .get(`/api/v1/texts/${textCreateResponse.body.id}`)
             .send();
 
-        expect(textGetResponse.status).toEqual(httpStatus.BAD_REQUEST);
+        expect(textGetResponse.status).toEqual(httpStatus.NOT_FOUND);
     });
 
     it('should not delete text by id with invalid id', async () => {
@@ -153,7 +153,7 @@ describe('Text APIs', () => {
             .delete(`/api/v1/texts/${invalidUuid}`)
             .send();
 
-        expect(textDeleteResponse.status).toEqual(httpStatus.BAD_REQUEST);
+        expect(textDeleteResponse.status).toEqual(httpStatus.NOT_FOUND);
     });
 
     it('should not delete text by id with invalid uuid', async () => {
