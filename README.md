@@ -62,6 +62,12 @@ A powerful text analysis tool for processing and understanding textual data.
    # fill in the required environment variables
    # save and exit
    ```
+3. Create a database and update the `.env` file with the database credentials.
+    ```bash
+    # create database in the postgres server
+    CREATE DATABASE text_analyzer_tool;
+    # update the .env file with the database credentials and database name
+    ```
 
 ## Usage
 1. Start the application:
@@ -121,6 +127,14 @@ The API uses standard HTTP status codes for error responses:
 ## Testing
 Run the test suite with:
 ```bash
+# copy the env.example file to .env.test and update the environment variables
+cp env.example .env.test
+
+# create a test database in the postgres server
+CREATE DATABASE text_analyzer_tool_test;
+# update the .env.test file with the test database credentials and database name
+
+# run the test
 npm run test
 ```
 
