@@ -2,8 +2,20 @@ import httpStatus from 'http-status';
 import supertest from 'supertest';
 import { ExpressApplication } from '../../src/providers/expressApp';
 import { texts } from "../data/text";
+import { Postgres } from '../../src/providers/postgres';
 
 describe('Text APIs', () => {
+
+    beforeAll(async () => {
+        const postgres = await Postgres.getInstance();
+        await postgres.query('DELETE FROM texts');
+    });
+
+    afterEach(async () => {
+        const postgres = await Postgres.getInstance();
+        await postgres.query('DELETE FROM texts');
+    });
+
     it('should create new text', async () => {
         const textObject = texts[0];
         const textCreateResponse = await supertest(await ExpressApplication.configure())
@@ -179,15 +191,15 @@ describe('Text APIs', () => {
             });
 
         const textGetResponse = await supertest(await ExpressApplication.configure())
-            .get('/api/v1/texts/all')
+            .get('/api/v1/texts')
             .send();
 
         expect(textGetResponse.status).toEqual(httpStatus.OK);
-        expect(textGetResponse.body.texts.length).toEqual(2);
-        expect(textGetResponse.body.texts[0].text).toEqual(texts[0].text);
-        expect(textGetResponse.body.texts[1].text).toEqual(texts[1].text);
-        expect(textGetResponse.body.texts[0].id).toEqual(textCreateResponse.body.id);
-        expect(textGetResponse.body.texts[1].id).toEqual(textCreateResponse2.body.id);
+        expect(textGetResponse.body.length).toEqual(2);
+        expect(textGetResponse.body[0].text).toEqual(texts[0].text);
+        expect(textGetResponse.body[1].text).toEqual(texts[1].text);
+        expect(textGetResponse.body[0].id).toEqual(textCreateResponse.body.id);
+        expect(textGetResponse.body[1].id).toEqual(textCreateResponse2.body.id);
     });
 
     it('should get word count for a text id', async () => {
