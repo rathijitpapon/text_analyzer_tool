@@ -114,6 +114,7 @@ The API uses standard HTTP status codes for error responses:
 - `401 Unauthorized`: Authentication failure or missing authentication
 - `403 Forbidden`: Insufficient permissions for the requested action
 - `404 Not Found`: Requested resource not found
+- `422 Unprocessable Entity`: Validation error
 - `429 Too Many Requests`: Rate limit exceeded
 - `500 Internal Server Error`: Unexpected server error
 
