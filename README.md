@@ -89,11 +89,11 @@ A powerful text analysis tool for processing and understanding textual data.
 | `/api/v1/texts/:id` | GET | None | Yes | Retrieves a specific text entry |
 | `/api/v1/texts/:id` | DELETE | None | Yes | Deletes a specific text entry |
 | `/api/v1/texts/:id` | PATCH | `{ "text": "string" }` | Yes | Updates a specific text entry |
-| `/api/v1/text/:id/word-count` | GET | None | Yes | Counts words in a specific text entry |
-| `/api/v1/text/:id/character-count` | GET | None | Yes | Counts characters in a specific text entry |
-| `/api/v1/text/:id/sentence-count` | GET | None | Yes | Counts sentences in a specific text entry |
-| `/api/v1/text/:id/paragraph-count` | GET | None | Yes | Counts paragraphs in a specific text entry |
-| `/api/v1/text/:id/longest-paragraph-words` | GET | None | Yes | Finds the longest word in each paragraph |
+| `/api/v1/texts/:id/word-count` | GET | None | Yes | Counts words in a specific text entry |
+| `/api/v1/texts/:id/character-count` | GET | None | Yes | Counts characters in a specific text entry |
+| `/api/v1/texts/:id/sentence-count` | GET | None | Yes | Counts sentences in a specific text entry |
+| `/api/v1/texts/:id/paragraph-count` | GET | None | Yes | Counts paragraphs in a specific text entry |
+| `/api/v1/texts/:id/longest-paragraph-words` | GET | None | Yes | Finds the longest word in each paragraph |
 
 ## Authentication
 The application uses Google OAuth2.0 for authentication:
