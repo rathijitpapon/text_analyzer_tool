@@ -5,6 +5,8 @@ A powerful text analysis tool for processing and understanding textual data.
 ## Table of Contents
 - [Text Analyzer Tool](#text-analyzer-tool)
   - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Architecture](#architecture)
   - [Features](#features)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -18,6 +20,12 @@ A powerful text analysis tool for processing and understanding textual data.
   - [Deployment](#deployment)
   - [License](#license)
   - [Future Development](#future-development)
+
+## Overview
+This application is a text analysis tool that allows users to analyze text data and get insights into the text. It is built using Node.js, Express.js, PostgreSQL, Redis, and TypeScript. It uses Google OAuth2.0 for authentication and express-rate-limit for rate limiting to prevent abuse. It also uses caching mechanism to improve the performance of the APIs. The application provides various endpoints to create, read, update, and delete text entries, as well as analyze the text data for word count, character count, sentence count, paragraph count, and longest word in each paragraph.
+
+## Architecture
+![Architecture](./assets/backend_architecture.png)
 
 ## Features
 - Word count analysis
